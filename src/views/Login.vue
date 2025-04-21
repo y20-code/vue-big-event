@@ -37,6 +37,19 @@ const rules = {
     ]
 }
 
+//调用后台接口，完成注册
+import {userRegisterService} from '@/api/user.js'
+const register = async () => {
+    let result = await userRegisterService(registerData.value)
+    if(result.code === 0){
+        //成功了
+        alert(result.msg ? result.msg :'注册成功')
+    }else[
+        //失败了
+        alert('注册失败')
+    ]
+}
+
 </script>
 
 <template>
@@ -59,7 +72,7 @@ const rules = {
                 </el-form-item>
                 <!-- 注册按钮 -->
                 <el-form-item>
-                    <el-button class="button" type="primary" auto-insert-space>
+                    <el-button class="button" type="primary" auto-insert-space @click="register">
                         注册
                     </el-button>
                 </el-form-item>
