@@ -29,7 +29,7 @@ const categorys = ref([
 ])
 
 //声明一个异步的函数
-import {ArticleCategoryListService,articleCategoryAddService} from '@/api/article.js'
+import {ArticleCategoryListService,articleCategoryAddService,articleCategoryUpdateService} from '@/api/article.js'
 const articleCategoryList = async() => {
     let result = await ArticleCategoryListService();
     categorys.value = result.data;
@@ -78,14 +78,31 @@ const showDialog = (row) => {
     //扩展id属性，将来需要传递给后台，完成分类的修改
     categoryModel.value.id = row.id
 }
-</script>
+
+//编辑分类
+const updataCategory = async () =>{
+    //调用分类
+    let result = await articleCategoryUpdateService(categoryModel.value);
+    ElMessage.success(result.msg? result.msg:'修改成功')
+
+    //调用获取所有分类的函数
+    articleCategoryList();
+    dialogVisible.value = false
+}
+
+//清空模型的数据
+const clearData = () =>{
+    categoryModel.value.categoryName = '';
+    categoryModel.value.categoryAlias = '';
+}
+</script> 
 <template>
     <el-card class="page-container">
         <template #header>
             <div class="header">
                 <span>文章分类</span>
                 <div class="extra">
-                    <el-button type="primary" @click="dialogVisible=true;title='添加分类'">添加分类</el-button>
+                    <el-button type="primary" @click="dialogVisible=true;title='添加分类';clearData()">添加分类</el-button>
                 </div>
             </div>
         </template>
@@ -118,7 +135,7 @@ const showDialog = (row) => {
         <template #footer>
             <span class="dialog-footer">
                 <el-button @click="dialogVisible = false">取消</el-button>
-                <el-button type="primary" @click="addCategory"> 确认 </el-button>
+                <el-button type="primary" @click="title==='添加分类'? addCategory() : updataCategory()"> 确认 </el-button>
             </span>
         </template>
     </el-dialog>
