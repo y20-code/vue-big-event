@@ -33,3 +33,15 @@ export const articleListService = (params)=>{
 export const articleAddService = (articleData) =>{
     return request.post('/article',articleData);
 }
+
+//文章修改
+export const articleUpdateService = (articleData) =>{
+    // 确保发送给后端的数据格式正确
+    console.log('发送更新请求：', articleData);
+    return request.put('/article', articleData);
+}
+
+//文章删除
+export const articleDeleteService = (id) =>{
+    return request.delete('/article?id=' + id);
+}

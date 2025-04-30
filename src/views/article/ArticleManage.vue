@@ -146,7 +146,7 @@ const uploadSuccess = (result)=>{
     articleModel.value.coverImg = result.data;
     console.log(result.data);
 }
-
+const title = ref('')
 //添加文章
 import { ElMessage } from 'element-plus'
 const addArticle = async (clickState) =>{
@@ -160,10 +160,41 @@ const addArticle = async (clickState) =>{
 
     //让抽屉消失
     visibleDrawer.value = false;
-
     //刷新当前列表
     articleList()
 }
+
+//修改文章
+const EidtArticle = (row) =>{
+    visibleDrawer.value = true
+    title.value='修改文章'
+
+    articleModel.value.title = row.title
+    articleModel.value.categoryId = row.categoryId
+    articleModel.value.coverImg = ref.coverImg
+    articleModel.value.content = ref.content
+    articleModel.value.state = ref.state
+    clearData()
+}
+
+const updataManage = async () =>{
+    //调用分类
+    let result = await articleUpdateService(categoryModel.value);
+    ElMessage.success(result.msg? result.msg:'修改成功')
+
+    //调用获取所有分类的函数
+    articleCategoryList();
+    dialogVisible.value = false
+}
+
+const clearData = () =>{
+    articleModel.value.title = ''
+    articleModel.value.categoryId = ''
+    articleModel.value.coverImg = ''
+    articleModel.value.content = ''
+    articleModel.value.state = ''
+}
+
 </script>
 <template>
     <el-card class="page-container">
@@ -171,7 +202,7 @@ const addArticle = async (clickState) =>{
             <div class="header">
                 <span>文章管理</span>
                 <div class="extra">
-                    <el-button type="primary" @click="visibleDrawer=true">添加文章</el-button>
+                    <el-button type="primary" @click="visibleDrawer=true;title='添加文章'">添加文章</el-button>
                 </div>
             </div>
         </template>
@@ -207,7 +238,7 @@ const addArticle = async (clickState) =>{
             <el-table-column label="状态" prop="state"></el-table-column>
             <el-table-column label="操作" width="100">
                 <template #default="{ row }">
-                    <el-button :icon="Edit" circle plain type="primary"></el-button>
+                    <el-button :icon="Edit" circle plain type="primary" @click="EidtArticle(row)"></el-button>
                     <el-button :icon="Delete" circle plain type="danger"></el-button>
                 </template>
             </el-table-column>
@@ -221,7 +252,7 @@ const addArticle = async (clickState) =>{
             @current-change="onCurrentChange" style="margin-top: 20px; justify-content: flex-end" />
 
             <!-- 抽屉 -->
-        <el-drawer v-model="visibleDrawer" title="添加文章" direction="rtl" size="50%">
+        <el-drawer v-model="visibleDrawer" :title="title" direction="rtl" size="50%">
             <!-- 添加文章表单 -->
             <el-form :model="articleModel" label-width="100px" >
                 <el-form-item label="文章标题" >
@@ -265,7 +296,7 @@ const addArticle = async (clickState) =>{
                     </div>
                 </el-form-item>
                 <el-form-item>
-                    <el-button type="primary" @click="addArticle('已发布')">发布</el-button>
+                    <el-button type="primary" @click="addArticle('已发布'),updataManage()" >发布</el-button>
                     <el-button type="info" @click="addArticle('草稿')">草稿</el-button>
                 </el-form-item>
             </el-form>
